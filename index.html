@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="MCHOOSE G98 и другие премиальные механические клавиатуры. Тримод подключения, горячая замена свитчей, PBT колпачки.">
+    <title>MCHOOSE | Премиальные механические клавиатуры</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231d1d1f' stroke-width='1.5'%3E%3Crect x='2' y='8' width='20' height='12' rx='1.5'/%3E%3Cpath d='M6 12h12M8 16h8'/%3E%3C/svg%3E">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        /* ---------- RESET & GLOBAL ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f7;
+            --text-primary: #1d1d1f;
+            --text-secondary: #6e6e73;
+            --accent: #0071e3;
+            --accent-hover: #005bb5;
+            --border-light: #d2d2d7;
+            --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.02);
+            --transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        /* ---------- HEADER ---------- */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 70px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #1d1d1f, #4b4b50);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        /* Десктопное меню */
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 1.2rem;
+            align-items: center;
+        }
+
+        .nav-icons svg {
+            width: 22px;
+            height: 22px;
+            stroke: var(--text-primary);
+            stroke-width: 1.5;
+            fill: none;
+            transition: var(--transition);
+        }
+
+        .nav-icons button:hover svg {
+            stroke: var(--accent);
+        }
+
+        /* Гамбургер (мобильное меню) */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 28px;
+            height: 20px;
+            position: relative;
+            transition: transform 0.2s;
+        }
+
+        .menu-toggle span {
+            width: 100%;
+            height: 2px;
+            background-color: var(--text-primary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 2px;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: translateY(9px) rotate(45deg);
+        }
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+            transform: scaleX(0);
+        }
+        .menu-toggle.active span:nth-child(3) {
+            transform: translateY(-9px) rotate(-45deg);
+        }
+
+        /* Мобильное меню (выезжает справа) */
+        .mobile-menu {
+            position: fixed;
+            top: 70px;
+            right: -100%;
+            width: 80%;
+            max-width: 320px;
+            height: calc(100vh - 70px);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            box-shadow: -2px 0 20px rgba(0, 0, 0, 0.05);
+            z-index: 999;
+            transition: right 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+            padding: 40px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu a {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-light);
+            transition: var(--transition);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent);
+            padding-left: 8px;
+        }
+
+        /* ---------- HERO ---------- */
+        .hero {
+            padding: 100px 0 80px;
+            background: linear-gradient(to bottom, #fafafc, #ffffff);
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+        }
+
+        .hero-content .subhead {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-content p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 90%;
+        }
+
+        .cta-button {
+            background-color: var(--accent);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: inline-block;
+            transition: var(--transition);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .cta-button:hover {
+            background-color: var(--accent-hover);
+            transform: scale(1.02);
+        }
+
+        .hero-image img {
+            border-radius: 32px;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.5s ease;
+        }
+
+        /* ---------- SPECS TABLE ---------- */
+        .specs-section {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .specs-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .specs-title {
+            font-size: 2rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .specs-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .specs-table tr {
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .specs-table td {
+            padding: 20px 0;
+            font-size: 1rem;
+        }
+
+        .specs-table td:first-child {
+            font-weight: 600;
+            width: 40%;
+            color: var(--text-primary);
+        }
+
+        .specs-table td:last-child {
+            color: var(--text-secondary);
+        }
+
+        /* ---------- FEATURES ---------- */
+        .features {
+            padding: 80px 0;
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 56px;
+            letter-spacing: -0.02em;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 24px 16px;
+            background: white;
+            border-radius: 28px;
+            transition: var(--transition);
+            box-shadow: var(--card-shadow);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 2.4rem;
+            margin-bottom: 1rem;
+            font-weight: 400;
+            letter-spacing: 0;
+        }
+
+        /* ---------- PRODUCTS ---------- */
+        .products {
+            padding: 100px 0;
+            background: var(--bg-secondary);
+        }
+
+        .products-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 48px;
+        }
+
+        .products-header h2 {
+            font-size: 2.2rem;
+            font-weight: 600;
+        }
+
+        .view-all {
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 40px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 24px 36px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-image {
+            background: #f2f2f5;
+            padding: 24px;
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-image img {
+            width: 100%;
+            max-height: 180px;
+            object-fit: contain;
+            transition: transform 0.4s;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.02);
+        }
+
+        .product-info {
+            padding: 20px 20px 24px;
+        }
+
+        .product-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .product-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .price {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 12px 0 16px;
+        }
+
+        .buy-btn {
+            width: 100%;
+            background-color: var(--bg-secondary);
+            border-radius: 40px;
+            padding: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            transition: var(--transition);
+            border: 1px solid var(--border-light);
+        }
+
+        .buy-btn:hover {
+            background-color: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* ---------- SHOWCASE ---------- */
+        .showcase {
+            background: #1d1d1f;
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        /* ---------- NEWSLETTER ---------- */
+        .newsletter {
+            padding: 80px 0;
+            background: var(--bg-secondary);
+            text-align: center;
+        }
+
+        .news-form {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .news-form input {
+            padding: 14px 20px;
+            border-radius: 40px;
+            border: 1px solid var(--border-light);
+            width: 280px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .news-form input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
+        }
+
+        .news-form button {
+            background: var(--accent);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .news-form button:hover {
+            background: var(--accent-hover);
+        }
+
+        /* ---------- MODAL ---------- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            max-width: 480px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 28px;
+            padding: 32px;
+            box-shadow: 0 24px 48px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                max-height: 85vh;
+                padding: 24px;
+            }
+        }
+
+        .modal-content h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .modal-content p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .modal-form input, .modal-form textarea {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .modal-form input:focus, .modal-form textarea:focus {
+            border-color: var(--accent);
+        }
+
+        .modal-form button {
+            background: var(--accent);
+            color: white;
+            width: 100%;
+            padding: 14px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .modal-form button:hover {
+            background: var(--accent-hover);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        /* ---------- FOOTER ---------- */
+        .site-footer {
+            background: #f5f5f7;
+            padding: 48px 0 32px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 32px;
+            margin-bottom: 48px;
+        }
+
+        .footer-col h4 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col li {
+            margin-bottom: 12px;
+        }
+
+        .footer-col a {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .footer-col a:hover {
+            color: var(--accent);
+        }
+
+        .copyright {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            padding-top: 24px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        /* ---------- RESPONSIVE ---------- */
+        @media (max-width: 900px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .hero-content p {
+                max-width: 100%;
+            }
+            .hero-content h1 {
+                font-size: 2.8rem;
+            }
+            .nav-links {
+                display: none;
+            }
+            .menu-toggle {
+                display: flex;
+            }
+            .container {
+                padding: 0 24px;
+            }
+            .products-grid {
+                gap: 24px;
+            }
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero-content h1 {
+                font-size: 2.2rem;
+            }
+            .hero-content .subhead {
+                font-size: 1.2rem;
+            }
+            .specs-table td {
+                padding: 16px 0;
+                font-size: 0.9rem;
+            }
+            .specs-table td:first-child {
+                width: 45%;
+            }
+        }
+
+        /* ---------- SCROLL ANIMATION ---------- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.7s ease;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .no-scroll {
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="container">
+        <div class="navbar">
+            <div class="logo">MCHOOSE</div>
+            <ul class="nav-links">
+                <li><a href="#home">Главная</a></li>
+                <li><a href="#products">Клавиатуры</a></li>
+                <li><a href="#specs">Характеристики</a></li>
+                <li><a href="#features">Технологии</a></li>
+                <li><a href="#support">Поддержка</a></li>
+            </ul>
+            <div class="nav-icons">
+                <button aria-label="Поиск"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"/></svg></button>
+                <button aria-label="Корзина"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M3 6H5L7 16H19L21 6H5M7 16L5 6M7 16L6 20M19 16L20 20M9 20H15"/><circle cx="9" cy="20" r="1"/><circle cx="15" cy="20" r="1"/></svg></button>
+                <button class="menu-toggle" id="menuToggle" aria-label="Меню">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Мобильное меню, выезжающее справа -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#home">Главная</a>
+        <a href="#products">Клавиатуры</a>
+        <a href="#specs">Характеристики</a>
+        <a href="#features">Технологии</a>
+        <a href="#support">Поддержка</a>
+    </div>
+</header>
+
+<main>
+    <section id="home" class="hero">
+        <div class="container hero-grid">
+            <div class="hero-content reveal">
+                <h1>MCHOOSE G98.<br>Новая эра тактильности.</h1>
+                <div class="subhead">Тримод подключения · Hot-swap · PBT колпачки</div>
+                <p>Профессиональная механическая клавиатура с алюминиевым корпусом, подсветкой RGB и аккумулятором 4000 мАч. Полная совместимость с macOS и Windows.</p>
+                <a href="#products" class="cta-button">Выбрать модель →</a>
+            </div>
+            <div class="hero-image reveal">
+                <img src="https://images.pexels.com/photos/2115257/pexels-photo-2115257.jpeg?auto=compress&cs=tinysrgb&w=800" alt="MCHOOSE G98 механическая клавиатура">
+            </div>
+        </div>
+    </section>
+
+    <section id="specs" class="specs-section">
+        <div class="container specs-container">
+            <h2 class="specs-title reveal">Технические характеристики</h2>
+            <div class="reveal">
+                <table class="specs-table">
+                    <tr><td>Тип подключения</td><td>Tri-mode: 2.4G / Bluetooth 5.1 / USB-C проводной</td></tr>
+                    <tr><td>Переключатели</td><td>Hot-swap Gateron G Pro 2.0 (красные/коричневые/синие)</td></tr>
+                    <tr><td>Аккумулятор</td><td>4000 мАч, до 300 часов работы без подсветки</td></tr>
+                    <tr><td>Колпачки</td><td>PBT Double-Shot, устойчивость к истиранию</td></tr>
+                    <tr><td>Корпус</td><td>Алюминиевый CNC-обработанный, съёмный USB-C кабель</td></tr>
+                    <tr><td>Подсветка</td><td>RGB с 16,8 млн цветов, программируемая</td></tr>
+                    <tr><td>Совместимость</td><td>Windows, macOS, Linux, iOS, Android</td></tr>
+                    <tr><td>Габариты</td><td>382 x 136 x 42 мм, вес 1.3 кг</td></tr>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section id="products" class="products">
+        <div class="container">
+            <div class="products-header reveal">
+                <h2>Коллекция 2025</h2>
+                <a href="#" class="view-all">Все модели →</a>
+            </div>
+            <div class="products-grid">
+                <div class="product-card reveal">
+                    <div class="product-image"><img src="https://images.pexels.com/photos/6814463/pexels-photo-6814463.jpeg?auto=compress&cs=tinysrgb&w=600" alt="MCHOOSE G98"></div>
+                    <div class="product-info">
+                        <div class="product-title">MCHOOSE G98</div>
+                        <div class="product-desc">98% раскладка, горячая замена, Gateron G Pro 2.0, PBT, тримод</div>
+                        <div class="price">$139</div>
+                        <button class="buy-btn" data-name="MCHOOSE G98" data-price="$139">Купить</button>
+                    </div>
+                </div>
+                <div class="product-card reveal">
+                    <div class="product-image"><img src="https://images.pexels.com/photos/6814390/pexels-photo-6814390.jpeg?auto=compress&cs=tinysrgb&w=600" alt="K2 Pro"></div>
+                    <div class="product-info">
+                        <div class="product-title">MCHOOSE K2 Pro</div>
+                        <div class="product-desc">75% компакт, алюминиевый корпус, Kailh Box свитчи, RGB</div>
+                        <div class="price">$169</div>
+                        <button class="buy-btn" data-name="MCHOOSE K2 Pro" data-price="$169">Купить</button>
+                    </div>
+                </div>
+                <div class="product-card reveal">
+                    <div class="product-image"><img src="https://images.pexels.com/photos/7119560/pexels-photo-7119560.jpeg?auto=compress&cs=tinysrgb&w=600" alt="V10 Wireless"></div>
+                    <div class="product-info">
+                        <div class="product-title">MCHOOSE V10</div>
+                        <div class="product-desc">65% портативный, Bluetooth 5.2, аккумулятор 3000 мАч</div>
+                        <div class="price">$119</div>
+                        <button class="buy-btn" data-name="MCHOOSE V10" data-price="$119">Купить</button>
+                    </div>
+                </div>
+                <div class="product-card reveal">
+                    <div class="product-image"><img src="https://images.pexels.com/photos/3787661/pexels-photo-3787661.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Q1 Max"></div>
+                    <div class="product-info">
+                        <div class="product-title">MCHOOSE Q1 Max</div>
+                        <div class="product-desc">Full-size, CNC алюминий, премиальные свитчи Gateron Oil King</div>
+                        <div class="price">$199</div>
+                        <button class="buy-btn" data-name="MCHOOSE Q1 Max" data-price="$199">Купить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title reveal">Почему выбирают MCHOOSE</h2>
+            <div class="features-grid">
+                <div class="feature-card reveal"><div class="feature-icon">⚡︎</div><h3>Горячая замена</h3><p>Меняйте свитчи без пайки, совместимость с MX.</p></div>
+                <div class="feature-card reveal"><div class="feature-icon">🔊︎</div><h3>Акустическая изоляция</h3><p>Поролон, силиконовая прокладка — тихий и насыщенный звук.</p></div>
+                <div class="feature-card reveal"><div class="feature-icon">✦</div><h3>RGB повсюду</h3><p>16.8 млн цветов, эффекты, настройка через ПО.</p></div>
+                <div class="feature-card reveal"><div class="feature-icon">⌁</div><h3>Автономность 300ч</h3><p>4000 мАч, быстрая зарядка USB-C.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="showcase">
+        <div class="container">
+            <h2 class="reveal">MCHOOSE G98 Pro Max.</h2>
+            <p class="reveal">Бескомпромиссная скорость, тримод подключения и премиальный алюминий.</p>
+            <a href="#products" class="cta-button reveal">Предзаказ →</a>
+        </div>
+    </div>
+
+    <div class="newsletter">
+        <div class="container">
+            <h3 class="reveal">Будьте в курсе</h3>
+            <p class="reveal">Получайте первыми новинки, эксклюзивные скидки и обзоры.</p>
+            <form class="news-form" id="newsletterForm">
+                <input type="email" placeholder="Ваш Email" required>
+                <button type="submit">Подписаться</button>
+            </form>
+        </div>
+    </div>
+</main>
+
+<div id="orderModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">×</span>
+        <h3>Оформление заказа</h3>
+        <p id="modalProductInfo">Вы выбрали клавиатуру</p>
+        <form class="modal-form" id="orderForm">
+            <input type="text" id="name" placeholder="Ваше имя" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="tel" id="phone" placeholder="Телефон" required>
+            <textarea rows="2" id="comment" placeholder="Дополнительные пожелания"></textarea>
+            <button type="submit">Отправить заказ</button>
+        </form>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-col"><h4>Магазин</h4><ul><li><a href="#">Клавиатуры</a></li><li><a href="#">Свитчи</a></li></ul></div>
+            <div class="footer-col"><h4>Поддержка</h4><ul><li><a href="#">Помощь</a></li><li><a href="#">Гарантия</a></li></ul></div>
+            <div class="footer-col"><h4>О нас</h4><ul><li><a href="#">Бренд</a></li><li><a href="#">Новости</a></li></ul></div>
+        </div>
+        <div class="copyright"><p>© 2025 MCHOOSE. Все права защищены.</p></div>
+    </div>
+</footer>
+
+<script>
+    // Mobile menu: выезжает справа, гамбургер с анимацией
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    if (menuToggle && mobileMenu) {
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            document.body.classList.toggle('no-scroll');
+        });
+
+        // Закрытие меню при клике на ссылку
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menuToggle.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                document.body.classList.remove('no-scroll');
+            });
+        });
+    }
+
+    // Reveal on scroll
+    const revealElements = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15 });
+    revealElements.forEach(el => observer.observe(el));
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href');
+            if (targetId === "#" || targetId === "") return;
+            const target = document.querySelector(targetId);
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // Закрываем мобильное меню при клике на якорь
+                if (mobileMenu.classList.contains('active')) {
+                    menuToggle.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                    document.body.classList.remove('no-scroll');
+                }
+            }
+        });
+    });
+
+    // Modal logic
+    const modal = document.getElementById('orderModal');
+    const closeModal = document.querySelector('.close-modal');
+    const modalProductInfo = document.getElementById('modalProductInfo');
+    const orderForm = document.getElementById('orderForm');
+    let currentProduct = '';
+
+    function openModal(productName, price) {
+        if (!modal) return;
+        currentProduct = productName;
+        modalProductInfo.innerText = `Вы выбрали: ${productName} — ${price}`;
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModalFunc() {
+        if (!modal) return;
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+        if (orderForm) orderForm.reset();
+    }
+
+    document.querySelectorAll('.buy-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const productName = btn.getAttribute('data-name');
+            const productPrice = btn.getAttribute('data-price');
+            openModal(productName, productPrice);
+        });
+    });
+
+    if (closeModal) closeModal.addEventListener('click', closeModalFunc);
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) closeModalFunc();
+    });
+
+    // Form validation
+    if (orderForm) {
+        orderForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            if (!name || !email || !phone) {
+                alert('Пожалуйста, заполните имя, email и телефон.');
+                return;
+            }
+            if (!email.includes('@') || !email.includes('.')) {
+                alert('Введите корректный email.');
+                return;
+            }
+            alert(`Спасибо, ${name}! Ваш заказ на "${currentProduct}" принят. Наш менеджер свяжется с вами.`);
+            closeModalFunc();
+        });
+    }
+
+    // Newsletter
+    const newsletterForm = document.getElementById('newsletterForm');
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const input = newsletterForm.querySelector('input');
+            const email = input.value.trim();
+            if (email && email.includes('@')) {
+                alert(`Спасибо за подписку, ${email}!`);
+                input.value = '';
+            } else {
+                alert('Введите корректный email.');
+            }
+        });
+    }
+
+    // Header shadow on scroll
+    window.addEventListener('scroll', () => {
+        const header = document.querySelector('.site-header');
+        if (header) {
+            header.style.borderBottomColor = window.scrollY > 10 ? 'rgba(0,0,0,0.1)' : 'rgba(0,0,0,0.05)';
+            header.style.boxShadow = window.scrollY > 10 ? '0 2px 12px rgba(0,0,0,0.02)' : 'none';
+        }
+    });
+
+    // Initial reveal for hero
+    window.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.hero .reveal').forEach(el => {
+            if (el.getBoundingClientRect().top < window.innerHeight) {
+                el.classList.add('active');
+                observer.unobserve(el);
+            }
+        });
+    });
+</script>
+</body>
+</html>
