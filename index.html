@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vastum - Смотреть аниме онлайн</title>
+    <style>
+        /* Базовые настройки и темная тема */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212; /* Темный фон */
+            color: #ffffff;
+        }
+
+        /* Шапка сайта (красный цвет) */
+        .header {
+            background-color: #d32f2f; /* Глубокий красный оттенок */
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        /* Бургер-меню */
+        .burger-menu {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-right: 25px;
+            padding: 5px;
+        }
+        .burger-menu span {
+            width: 30px;
+            height: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        /* Логотип Vastum */
+        .logo {
+            font-size: 26px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Боковое меню (скрытое по умолчанию) */
+        .sidebar {
+            position: fixed;
+            left: -280px; /* Спрятано за экраном */
+            top: 66px; /* Ниже шапки */
+            width: 250px;
+            height: calc(100% - 66px);
+            background-color: #1e1e1e;
+            transition: left 0.3s ease;
+            z-index: 999;
+            border-right: 2px solid #d32f2f;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+        }
+        .sidebar.active {
+            left: 0; /* Выезжает при клике */
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar ul li a {
+            display: block;
+            padding: 18px 25px;
+            color: #ccc;
+            text-decoration: none;
+            font-size: 18px;
+            border-bottom: 1px solid #333;
+            transition: 0.2s;
+        }
+        .sidebar ul li a:hover {
+            background-color: #d32f2f;
+            color: white;
+            padding-left: 35px; /* Эффект наведения */
+        }
+
+        /* Контентная часть */
+        .content {
+            padding: 30px 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .anime-title {
+            margin-bottom: 20px;
+            border-left: 5px solid #d32f2f;
+            padding-left: 15px;
+        }
+        .anime-title h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        /* Плеер */
+        .player-container {
+            background: #000;
+            border: 2px solid #d32f2f;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(211, 47, 47, 0.4);
+            margin-bottom: 25px;
+        }
+        video {
+            width: 100%;
+            display: block;
+            aspect-ratio: 16/9;
+        }
+
+        /* Панель управления (выбор озвучки) */
+        .controls {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .controls label {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        select {
+            background: #2a2a2a;
+            color: white;
+            padding: 12px 15px;
+            border: 1px solid #d32f2f;
+            border-radius: 5px;
+            font-size: 16px;
+            outline: none;
+            cursor: pointer;
+            flex-grow: 1;
+            max-width: 300px;
+        }
+        select:focus {
+            box-shadow: 0 0 5px #d32f2f;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Шапка сайта -->
+    <header class="header">
+        <div class="burger-menu" id="burgerBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="logo">Vastum</div>
+    </header>
+
+    <!-- Выезжающее боковое меню -->
+    <nav class="sidebar" id="sidebarMenu">
+        <ul>
+            <li><a href="#">Главная</a></li>
+            <li><a href="#">Каталог аниме</a></li>
+            <li><a href="#">Расписание онгоингов</a></li>
+            <li><a href="#">Топ-100</a></li>
+            <li><a href="#">Случайное аниме</a></li>
+        </ul>
+    </nav>
+
+    <!-- Основной контент -->
+    <main class="content">
+        <div class="anime-title">
+            <h1>Магическая битва (Тестовый показ)</h1>
+            <p>Эпизод 1: Двуликий призрак</p>
+        </div>
+
+        <!-- Видеоплеер -->
+        <div class="player-container">
+            <!-- В качестве примера используются открытые тестовые видео -->
+            <video id="animePlayer" controls>
+                <source id="videoSource" src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                Ваш браузер не поддерживает встроенные видео.
+            </video>
+        </div>
+
+        <!-- Панель выбора озвучки -->
+        <div class="controls">
+            <label for="dubSelect">Озвучка:</label>
+            <select id="dubSelect">
+                <!-- Значение value (ссылки) будут меняться скриптом при выборе -->
+                <option value="https://www.w3schools.com/html/mov_bbb.mp4">StudioBand (Пример видео 1)</option>
+                <option value="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4">AniDub (Пример видео 2)</option>
+                <option value="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/friday.mp4">Оригинал + Субтитры (Пример 3)</option>
+            </select>
+        </div>
+    </main>
+
+    <!-- JavaScript логика -->
+    <script>
+        // Логика Бургер-меню
+        const burgerBtn = document.getElementById('burgerBtn');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+
+        burgerBtn.addEventListener('click', () => {
+            sidebarMenu.classList.toggle('active');
+        });
+
+        // Закрытие меню при клике вне его области
+        document.addEventListener('click', (event) => {
+            if (!sidebarMenu.contains(event.target) && !burgerBtn.contains(event.target)) {
+                sidebarMenu.classList.remove('active');
+            }
+        });
+
+        // Логика смены озвучки
+        const dubSelect = document.getElementById('dubSelect');
+        const animePlayer = document.getElementById('animePlayer');
+        const videoSource = document.getElementById('videoSource');
+
+        dubSelect.addEventListener('change', function() {
+            // Сохраняем текущее время просмотра, чтобы не начинать серию заново
+            const currentTime = animePlayer.currentTime; 
+            const isPaused = animePlayer.paused;
+
+            // Меняем источник видео на тот, что выбран в выпадающем списке
+            videoSource.src = this.value; 
+            
+            // Перезагружаем плеер с новым файлом
+            animePlayer.load(); 
+
+            // Возвращаем на ту же секунду после загрузки (работает, если видео одинаковой длины)
+            animePlayer.addEventListener('loadedmetadata', function restoreTime() {
+                animePlayer.currentTime = currentTime;
+                if (!isPaused) {
+                    animePlayer.play();
+                }
+                animePlayer.removeEventListener('loadedmetadata', restoreTime);
+            });
+        });
+    </script>
+</body>
+</html>
