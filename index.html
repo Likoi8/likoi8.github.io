@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>Vastum – anime streaming</title>
+  <script src="https://kodik.info/js/player.js" defer></script>
+  <style>
+    /* === ОСНОВА В СТИЛЕ ANILIBRIA.TOP === */
+    :root {
+      --bg-dark: #0e0e0e;
+      --surface: #141414;
+      --surface-light: #1e1e1e;
+      --accent: #e53935;      /* красный */
+      --accent-hover: #ff5252;
+      --text: #f5f5f5;
+      --text-muted: #aaa;
+      --shadow: 0 2px 8px rgba(0,0,0,0.6);
+      --radius: 10px;
+      --font: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg-dark);
+      font-family: var(--font);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1400px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ===== ШАПКА (как на anilibria) ===== */
+    .header {
+      background: var(--surface);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding: 0.8rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      cursor: pointer;
+    }
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 1.7rem;
+      box-shadow: 0 0 10px rgba(229,57,53,0.4);
+    }
+    .logo-text {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #fff;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+    }
+
+    /* поиск в шапке */
+    .search-form {
+      display: flex;
+      align-items: center;
+      background: var(--surface-light);
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid #333;
+    }
+    .search-form input {
+      background: transparent;
+      border: none;
+      padding: 0.6rem 1rem;
+      color: white;
+      width: 200px;
+      outline: none;
+      font-size: 0.9rem;
+    }
+    .search-form input::placeholder {
+      color: #888;
+    }
+    .search-form button {
+      background: var(--accent);
+      border: none;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .search-form button:hover {
+      background: var(--accent-hover);
+    }
+
+    /* меню-бургер (упрощённо) */
+    .burger {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.6rem;
+      cursor: pointer;
+      padding: 0.4rem;
+    }
+    .menu-dropdown {
+      position: absolute;
+      top: 50px;
+      right: 20px;
+      background: var(--surface);
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 0.8rem;
+      display: none;
+      flex-direction: column;
+      gap: 0.4rem;
+      z-index: 200;
+    }
+    .menu-dropdown.active { display: flex; }
+    .menu-dropdown a {
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+    }
+    .menu-dropdown a:hover {
+      background: var(--surface-light);
+      color: white;
+    }
+
+    /* ===== ПЛЕЕР ===== */
+    .player-wrapper {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #000;
+      position: relative;
+    }
+    .player-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #ccc;
+      text-align: center;
+      background: #111;
+    }
+    .player-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* ===== КАТАЛОГ ===== */
+    .content {
+      padding: 1.5rem 2rem;
+      flex: 1;
+    }
+    .section-title {
+      font-size: 1.6rem;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: #fff;
+      border-bottom: 1px solid #222;
+      padding-bottom: 0.5rem;
+    }
+    .section-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 24px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+    .anime-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1.2rem;
+    }
+    .anime-card {
+      background: var(--surface-light);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+    .anime-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(229,57,53,0.2);
+    }
+    .card-img {
+      width: 100%;
+      aspect-ratio: 2/3;
+      background: #2a2a2a;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      color: #555;
+    }
+    .card-info {
+      padding: 0.7rem;
+    }
+    .card-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 1.2rem;
+      color: #666;
+      font-size: 0.75rem;
+      border-top: 1px solid #1a1a1a;
+    }
+
+    @media (max-width: 600px) {
+      .header { padding: 0.8rem 1rem; }
+      .content { padding: 1rem; }
+      .search-form input { width: 120px; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <!-- ШАПКА -->
+  <header class="header">
+    <div class="logo-area" onclick="location.reload()">
+      <div class="logo-icon">V</div>
+      <span class="logo-text">Vastum</span>
+    </div>
+    <div class="header-actions">
+      <div class="search-form">
+        <input type="text" id="searchInput" placeholder="Название аниме...">
+        <button id="searchBtn">🔍</button>
+      </div>
+      <div style="position: relative;">
+        <button class="burger" id="burgerBtn">☰</button>
+        <div class="menu-dropdown" id="menuDropdown">
+          <a href="#" id="menuRandom">Случайное</a>
+          <a href="#" id="menuStop">Остановить плеер</a>
+          <a href="https://anilibria.top" target="_blank">AniLibria (оригинал)</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ПЛЕЕР -->
+  <div class="player-wrapper" id="playerContainer">
+    <div class="player-placeholder" id="playerPlaceholder">
+      <div style="font-size:3rem;">🎬</div>
+      <p>Найдите аниме через поиск или кликните по карточке</p>
+    </div>
+  </div>
+
+  <!-- КАТАЛОГ -->
+  <div class="content">
+    <h2 class="section-title">Популярное (русская озвучка)</h2>
+    <div class="anime-grid" id="animeGrid"></div>
+  </div>
+
+  <footer class="footer">
+    Vastum · данные AniLibria · плеер Kodik
+  </footer>
+</div>
+
+<script>
+  (function() {
+    // ---------- API ----------
+    const ANILIBRIA_API = 'https://api.anilibria.tv/v2/animeUpdates?limit=24';
+    const KODIK_SEARCH_URL = 'https://kodikapi.com/search?token=30e42d58e6f4c6b27c6b48c5af715ed2&title=';
+
+    // DOM
+    const playerContainer = document.getElementById('playerContainer');
+    const placeholder = document.getElementById('playerPlaceholder');
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const animeGrid = document.getElementById('animeGrid');
+    const burgerBtn = document.getElementById('burgerBtn');
+    const menuDropdown = document.getElementById('menuDropdown');
+    let currentIframe = null;
+
+    // ---------- ПЛЕЕР ----------
+    function loadKodikPlayer(url) {
+      if (currentIframe) {
+        currentIframe.remove();
+        currentIframe = null;
+      }
+      placeholder.style.display = 'none';
+      const iframe = document.createElement('iframe');
+      iframe.src = url;
+      iframe.allow = "autoplay; fullscreen; encrypted-media";
+      iframe.allowFullscreen = true;
+      iframe.title = "Kodik Player";
+      playerContainer.appendChild(iframe);
+      currentIframe = iframe;
+    }
+
+    function resetPlayer() {
+      if (currentIframe) {
+        currentIframe.remove();
+        currentIframe = null;
+      }
+      placeholder.style.display = 'flex';
+    }
+
+    async function searchAndPlay(title) {
+      if (!title.trim()) return;
+      try {
+        const response = await fetch(`${KODIK_SEARCH_URL}${encodeURIComponent(title)}`);
+        const data = await response.json();
+        if (data.results && data.results.length > 0) {
+          const r = data.results[0];
+          const playerUrl = `https://kodik.info/${r.type}/${r.id}/720p`;
+          loadKodikPlayer(playerUrl);
+        } else {
+          alert('Ничего не найдено. Попробуйте другое название.');
+        }
+      } catch (e) {
+        alert('Ошибка поиска. Возможно, Kodik временно недоступен.');
+      }
+    }
+
+    // ---------- КАТАЛОГ (AniLibria) ----------
+    async function loadCatalog() {
+      try {
+        const res = await fetch(ANILIBRIA_API);
+        const data = await res.json();
+        const list = data?.list || data || [];
+        renderCards(list.slice(0, 24));
+      } catch (e) {
+        console.warn('AniLibria API упал, фолбэк.');
+        const fallback = [
+          { names: { ru: 'Наруто' }, year: 2002, posters: { medium: { url: '' } } },
+          { names: { ru: 'Ван-Пис' }, year: 1999, posters: { medium: { url: '' } } },
+          { names: { ru: 'Атака титанов' }, year: 2013, posters: { medium: { url: '' } } }
+        ];
+        renderCards(fallback);
+      }
+    }
+
+    function renderCards(animeList) {
+      animeGrid.innerHTML = '';
+      animeList.forEach(anime => {
+        const title = anime.names?.ru || anime.names?.en || 'Без названия';
+        const poster = anime.posters?.medium?.url || '';
+        const card = document.createElement('div');
+        card.className = 'anime-card';
+        card.innerHTML = `
+          <div class="card-img" style="background-image: url('${poster}');">
+            ${!poster ? '🎬' : ''}
+          </div>
+          <div class="card-info">
+            <div class="card-title">${title}</div>
+            <div class="card-meta">${anime.year || 'озвучка'}</div>
+          </div>
+        `;
+        card.addEventListener('click', () => {
+          searchInput.value = title;
+          searchAndPlay(title);
+        });
+        animeGrid.appendChild(card);
+      });
+    }
+
+    // ---------- СОБЫТИЯ ----------
+    searchBtn.addEventListener('click', () => searchAndPlay(searchInput.value));
+    searchInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') searchAndPlay(searchInput.value);
+    });
+
+    // бургер
+    burgerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menuDropdown.classList.toggle('active');
+    });
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.header-actions')) menuDropdown.classList.remove('active');
+    });
+
+    document.getElementById('menuStop')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      resetPlayer();
+    });
+    document.getElementById('menuRandom')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      const cards = document.querySelectorAll('.anime-card');
+      if (cards.length) {
+        const random = cards[Math.floor(Math.random() * cards.length)];
+        random.scrollIntoView({ behavior: 'smooth' });
+        random.click();
+      }
+    });
+
+    // Инициализация
+    loadCatalog();
+    setInterval(loadCatalog, 30 * 60 * 1000);
+  })();
+</script>
+</body>
+</html>
