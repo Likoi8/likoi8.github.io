@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vastum — Смотри аниме</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060810;--surface:#0d1120;--surface2:#141828;--border:rgba(120,160,255,0.12);--accent:#4f8eff;--accent2:#e8436a;--accent3:#b06bff;--text:#e8eeff;--muted:#7080a0;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:15px;min-height:100vh;overflow-x:hidden;}
+
+/* ── HEADER ── */
+header{position:sticky;top:0;z-index:200;display:flex;align-items:center;gap:16px;padding:0 24px;height:60px;background:rgba(6,8,16,0.93);backdrop-filter:blur(18px);border-bottom:1px solid var(–border);}
+.burger{width:36px;height:36px;display:flex;flex-direction:column;justify-content:center;gap:5px;cursor:pointer;border:none;background:none;padding:5px;border-radius:6px;flex-shrink:0;}
+.burger:hover{background:rgba(79,142,255,0.1);}
+.burger span{display:block;height:2px;width:100%;background:var(–text);border-radius:2px;}
+.logo{font-family:‘Cinzel’,serif;font-size:22px;font-weight:900;letter-spacing:4px;text-decoration:none;flex-shrink:0;background:linear-gradient(135deg,#fff 30%,var(–accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.logo em{font-style:normal;-webkit-text-fill-color:var(–accent2);}
+
+.search-wrap{flex:1;max-width:440px;margin-left:auto;position:relative;}
+.search-wrap input{width:100%;background:var(–surface2);border:1px solid var(–border);border-radius:8px;color:var(–text);font-family:inherit;font-size:14px;padding:8px 38px 8px 14px;outline:none;transition:border-color .2s,box-shadow .2s;}
+.search-wrap input:focus{border-color:var(–accent);box-shadow:0 0 0 3px rgba(79,142,255,.13);}
+.search-wrap input::placeholder{color:var(–muted);}
+.search-wrap .sico{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(–muted);pointer-events:none;}
+.search-results{position:absolute;top:calc(100%+6px);left:0;right:0;background:var(–surface);border:1px solid var(–border);border-radius:10px;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.65);display:none;z-index:400;}
+.search-results.show{display:block;}
+.sr-item{display:flex;align-items:center;gap:12px;padding:10px 14px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(–border);}
+.sr-item:last-child{border-bottom:none;}
+.sr-item:hover{background:rgba(79,142,255,.08);}
+.sr-img{width:36px;height:52px;object-fit:cover;border-radius:4px;flex-shrink:0;background:var(–surface2);}
+.sr-title{font-size:14px;font-weight:700;}
+.sr-title mark{background:rgba(79,142,255,.28);color:var(–text);border-radius:2px;padding:0 2px;}
+.sr-meta{font-size:11px;color:var(–muted);}
+.sr-empty{padding:16px;color:var(–muted);font-size:13px;text-align:center;}
+
+/* ── SIDEBAR ── */
+.sb-overlay{position:fixed;inset:0;z-index:250;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s;}
+.sb-overlay.open{opacity:1;pointer-events:all;}
+.sidebar{position:fixed;left:0;top:0;bottom:0;z-index:251;width:268px;background:var(–surface);border-right:1px solid var(–border);transform:translateX(-100%);transition:transform .35s ease;display:flex;flex-direction:column;}
+.sidebar.open{transform:translateX(0);}
+.sb-head{padding:20px 24px 18px;border-bottom:1px solid var(–border);font-family:‘Cinzel’,serif;font-size:19px;font-weight:900;letter-spacing:4px;background:linear-gradient(135deg,#fff 30%,var(–accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sidebar nav{padding:10px 0;flex:1;}
+.sidebar nav a{display:flex;align-items:center;gap:12px;padding:12px 24px;color:var(–muted);text-decoration:none;font-size:15px;font-weight:600;letter-spacing:.4px;transition:color .18s,background .18s;border-left:3px solid transparent;}
+.sidebar nav a:hover,.sidebar nav a.active{color:var(–text);background:rgba(79,142,255,.07);border-left-color:var(–accent);}
+.sb-foot{padding:14px 24px;border-top:1px solid var(–border);font-size:11px;color:var(–muted);}
+
+/* ── HERO ── */
+.hero{position:relative;overflow:hidden;min-height:400px;display:flex;align-items:flex-end;padding:0 48px 44px;background:#060810;}
+.hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(0.22) saturate(1.3);}
+.hero-glow{position:absolute;inset:0;background:radial-gradient(ellipse 75% 55% at 68% 38%,rgba(79,142,255,.2),transparent),radial-gradient(ellipse 45% 55% at 18% 68%,rgba(176,107,255,.14),transparent);}
+.hero-grad{position:absolute;inset:0;background:linear-gradient(90deg,rgba(6,8,16,.92) 38%,transparent 75%),linear-gradient(0deg,rgba(6,8,16,.95) 0%,transparent 50%);}
+.hero-content{position:relative;z-index:2;max-width:520px;}
+.hero-badge{display:inline-block;margin-bottom:10px;padding:3px 12px;border-radius:20px;background:rgba(232,67,106,.18);border:1px solid rgba(232,67,106,.35);font-size:11px;font-weight:700;letter-spacing:2px;color:var(–accent2);text-transform:uppercase;}
+.hero h1{font-family:‘Cinzel’,serif;font-size:36px;font-weight:900;line-height:1.1;margin-bottom:12px;text-shadow:0 0 36px rgba(79,142,255,.45);}
+.hero p{color:var(–muted);font-size:14px;line-height:1.65;margin-bottom:22px;max-width:400px;}
+.hero-btns{display:flex;gap:10px;}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:14px;font-weight:700;letter-spacing:.4px;transition:all .2s;text-decoration:none;}
+.btn-primary{background:linear-gradient(135deg,var(–accent),var(–accent3));color:#fff;box-shadow:0 4px 18px rgba(79,142,255,.38);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(79,142,255,.52);}
+.btn-ghost{background:transparent;color:var(–text);border:1px solid var(–border);}
+.btn-ghost:hover{border-color:var(–accent);color:var(–accent);}
+
+/* ── GRID ── */
+.section{padding:36px 28px;}
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.sec-title{font-family:‘Cinzel’,serif;font-size:16px;font-weight:700;letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;gap:9px;}
+.sec-title::before{content:’’;display:block;width:4px;height:18px;background:linear-gradient(180deg,var(–accent),var(–accent3));border-radius:2px;}
+.filters{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:20px;}
+.fbtn{padding:5px 15px;border-radius:20px;border:1px solid var(–border);background:var(–surface2);color:var(–muted);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:all .18s;}
+.fbtn:hover,.fbtn.active{border-color:var(–accent);color:var(–text);background:rgba(79,142,255,.1);}
+.anime-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:16px;}
+.anime-card{cursor:pointer;border-radius:10px;overflow:hidden;background:var(–surface);border:1px solid var(–border);transition:transform .2s,box-shadow .2s,border-color .2s;position:relative;}
+.anime-card:hover{transform:translateY(-5px) scale(1.013);box-shadow:0 12px 34px rgba(0,0,0,.5),0 0 0 1px var(–accent);border-color:var(–accent);}
+.anime-card:hover .cplay{opacity:1;}
+.cposter{aspect-ratio:2/3;width:100%;background:var(–surface2);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.cposter img{width:100%;height:100%;object-fit:cover;display:block;}
+.cposter::after{content:’’;position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(6,8,16,.9) 100%);}
+.cplay{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;background:rgba(0,0,0,.4);}
+.cbadge{position:absolute;top:8px;right:8px;z-index:3;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.4px;}
+.badge-top{background:rgba(255,200,0,.9);color:#000;}
+.badge-airing{background:var(–accent2);color:#fff;}
+.cep{position:absolute;bottom:8px;left:8px;z-index:3;font-size:10px;font-weight:700;color:rgba(255,255,255,.75);background:rgba(0,0,0,.55);padding:2px 6px;border-radius:4px;}
+.cinfo{padding:9px 11px 11px;}
+.ctitle{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
+.cmeta{font-size:11px;color:var(–muted);display:flex;gap:7px;}
+
+/* ── SKELETON LOADER ── */
+.skeleton{background:linear-gradient(90deg,var(–surface2) 25%,rgba(79,142,255,.07) 50%,var(–surface2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-card{border-radius:10px;overflow:hidden;border:1px solid var(–border);}
+.skel-poster{aspect-ratio:2/3;width:100%;}
+.skel-info{padding:9px 11px 11px;}
+.skel-line{height:12px;border-radius:4px;margin-bottom:6px;}
+.skel-line.short{width:60%;}
+
+/* ── DETAIL PAGE ── */
+.detail-page{display:none;}
+.detail-wrap{padding:24px 28px 80px;}
+.pback{display:inline-flex;align-items:center;gap:7px;margin-bottom:18px;color:var(–muted);cursor:pointer;font-size:14px;font-weight:600;border:none;background:none;font-family:inherit;transition:color .18s;}
+.pback:hover{color:var(–accent);}
+.detail-hero{position:relative;border-radius:16px;overflow:hidden;margin-bottom:28px;background:var(–surface);border:1px solid var(–border);min-height:260px;display:flex;align-items:flex-end;padding:28px;}
+.detail-hero-bg{position:absolute;inset:0;background-size:cover;background-position:center top;filter:brightness(0.18) saturate(1.3);}
+.detail-hero-grad{position:absolute;inset:0;background:linear-gradient(90deg,rgba(13,17,32,.97) 40%,transparent 80%),linear-gradient(0deg,rgba(13,17,32,.99) 0%,transparent 55%);}
+.detail-hero-content{position:relative;z-index:2;display:flex;gap:24px;align-items:flex-end;}
+.detail-poster{width:120px;flex-shrink:0;border-radius:8px;overflow:hidden;box-shadow:0 8px 28px rgba(0,0,0,.6);border:1px solid var(–border);}
+.detail-poster img{width:100%;display:block;}
+.detail-meta{flex:1;}
+.detail-title{font-family:‘Cinzel’,serif;font-size:26px;font-weight:900;margin-bottom:6px;line-height:1.2;}
+.detail-title-en{font-size:13px;color:var(–muted);margin-bottom:10px;}
+.detail-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;}
+.tag{padding:3px 9px;border-radius:4px;font-size:10px;font-weight:700;background:var(–surface2);border:1px solid var(–border);color:var(–muted);}
+.detail-score{font-size:28px;font-weight:900;color:#ffd700;display:flex;align-items:center;gap:6px;}
+.detail-score small{font-size:12px;color:var(–muted);font-weight:400;}
+.detail-actions{display:flex;gap:10px;margin-top:16px;}
+.detail-body{display:grid;grid-template-columns:1fr 300px;gap:24px;}
+@media(max-width:860px){.detail-body{grid-template-columns:1fr;}}
+.detail-desc{font-size:14px;line-height:1.8;color:var(–muted);background:var(–surface);border:1px solid var(–border);border-radius:12px;padding:20px;}
+.detail-desc h3{font-family:‘Cinzel’,serif;font-size:14px;color:var(–text);margin-bottom:10px;letter-spacing:1px;}
+.ep-side{background:var(–surface);border:1px solid var(–border);border-radius:12px;padding:16px;}
+.ep-head{font-size:11px;font-weight:700;letter-spacing:1px;color:var(–muted);text-transform:uppercase;margin-bottom:10px;}
+.ep-list{display:flex;flex-direction:column;gap:5px;max-height:520px;overflow-y:auto;padding-right:3px;}
+.ep-list::-webkit-scrollbar{width:3px;}
+.ep-list::-webkit-scrollbar-thumb{background:var(–border);border-radius:2px;}
+.ep-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;border:1px solid var(–border);background:var(–surface2);cursor:pointer;transition:all .18s;}
+.ep-item:hover{border-color:var(–accent);background:rgba(79,142,255,.07);}
+.ep-num{font-size:11px;font-weight:700;color:var(–muted);min-width:22px;}
+.ep-name{font-size:13px;font-weight:600;flex:1;}
+.no-video-note{background:rgba(232,67,106,.08);border:1px solid rgba(232,67,106,.25);border-radius:10px;padding:16px;font-size:13px;color:var(–muted);line-height:1.6;margin-top:16px;}
+.no-video-note strong{color:var(–accent2);}
+
+/* ── LOADING / ERROR STATES ── */
+.loading-state{text-align:center;padding:80px 20px;color:var(–muted);}
+.loading-spinner{width:40px;height:40px;border:3px solid var(–border);border-top-color:var(–accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-state{text-align:center;padding:60px 20px;color:var(–muted);}
+.error-state .eico{font-size:42px;margin-bottom:12px;}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.fu{animation:fadeUp .4s ease both;}
+</style>
+
+</head>
+<body>
+
+<header>
+  <button class="burger" id="burgerBtn" aria-label="Меню">
+    <span></span><span></span><span></span>
+  </button>
+  <a href="#" class="logo" onclick="showHome();return false;">VAST<em>UM</em></a>
+  <div class="search-wrap">
+    <input type="text" id="searchInput" placeholder="Поиск аниме..." autocomplete="off"
+      oninput="onSearch(this.value)"
+      onfocus="if(this.value.trim())onSearch(this.value)"
+      onblur="setTimeout(()=>document.getElementById('searchResults').classList.remove('show'),200)">
+    <svg class="sico" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</header>
+
+<div class="sb-overlay" id="sbOverlay" onclick="closeSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <div class="sb-head">VASTUM</div>
+  <nav>
+    <a href="#" class="active" id="navHome" onclick="showHome();closeSidebar();return false;">
+      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Главная</a>
+    <a href="#" onclick="loadGenre('action');closeSidebar();return false;">
+      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>Экшн</a>
+    <a href="#" onclick="loadGenre('romance');closeSidebar();return false;">
+      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Романтика</a>
+    <a href="#" onclick="loadTopAiring();closeSidebar();return false;">
+      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Онгоинги</a>
+    <a href="#" onclick="loadTopAnime();closeSidebar();return false;">
+      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Топ аниме</a>
+  </nav>
+  <div class="sb-foot">Данные: MyAnimeList / Jikan API</div>
+</div>
+
+<main>
+  <!-- HOME PAGE -->
+  <div id="homePage">
+    <div class="hero" id="heroSection">
+      <div class="hero-bg" id="heroBg"></div>
+      <div class="hero-glow"></div>
+      <div class="hero-grad"></div>
+      <div class="hero-content fu" id="heroContent">
+        <div class="hero-badge">🔥 Популярное</div>
+        <h1 id="heroTitle">Загрузка...</h1>
+        <p id="heroDesc">Получаем данные с MyAnimeList...</p>
+        <div class="hero-btns">
+          <button class="btn btn-primary" id="heroWatchBtn" onclick="">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>Подробнее
+          </button>
+        </div>
+      </div>
+    </div>
+
+```
+<div class="section">
+  <div class="sec-header">
+    <div class="sec-title" id="sectionTitle">Популярное</div>
+  </div>
+  <div class="filters" id="filterBtns">
+    <button class="fbtn active" onclick="setFilter(this,'popular')">Популярное</button>
+    <button class="fbtn" onclick="setFilter(this,'airing')">Онгоинги</button>
+    <button class="fbtn" onclick="setFilter(this,'upcoming')">Скоро</button>
+    <button class="fbtn" onclick="setFilter(this,'action')">Экшн</button>
+    <button class="fbtn" onclick="setFilter(this,'romance')">Романтика</button>
+    <button class="fbtn" onclick="setFilter(this,'fantasy')">Фэнтези</button>
+    <button class="fbtn" onclick="setFilter(this,'horror')">Хоррор</button>
+    <button class="fbtn" onclick="setFilter(this,'comedy')">Комедия</button>
+  </div>
+  <div class="anime-grid" id="animeGrid"></div>
+</div>
+```
+
+  </div>
+
+  <!-- DETAIL PAGE -->
+
+  <div class="detail-page" id="detailPage">
+    <div class="detail-wrap">
+      <button class="pback" onclick="showHome()">
+        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Назад
+      </button>
+      <div id="detailContent"></div>
+    </div>
+  </div>
+</main>
+
+<script>
+/* ═══════════════════════════════════════════════
+   JIKAN API v4 — https://api.jikan.moe/v4
+   Бесплатный, без ключей, данные с MyAnimeList
+═══════════════════════════════════════════════ */
+const API = 'https://api.jikan.moe/v4';
+
+// Жанры MAL по ID
+const GENRE_IDS = {action:1,adventure:2,comedy:4,fantasy:10,horror:14,romance:22,scifi:24};
+
+let heroAnime = null;
+let searchTimer = null;
+let currentFilter = 'popular';
+
+/* ─── SIDEBAR ─── */
+document.getElementById('burgerBtn').onclick = () => {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sbOverlay').classList.toggle('open');
+};
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sbOverlay').classList.remove('open');
+}
+
+/* ─── FETCH HELPER с retry при 429 ─── */
+async function apiFetch(url, retries = 3) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const res = await fetch(url);
+      if (res.status === 429) {
+        await new Promise(r => setTimeout(r, 1200 + i * 800));
+        continue;
+      }
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    } catch(e) {
+      if (i === retries - 1) throw e;
+      await new Promise(r => setTimeout(r, 600));
+    }
+  }
+}
+
+/* ─── СКЕЛЕТОНЫ ─── */
+function renderSkeletons(n = 12) {
+  return Array.from({length: n}, () => `
+    <div class="skel-card">
+      <div class="skel-poster skeleton"></div>
+      <div class="skel-info">
+        <div class="skel-line skeleton"></div>
+        <div class="skel-line short skeleton"></div>
+      </div>
+    </div>`).join('');
+}
+
+/* ─── ЗАГРУЗКА АНИМЕ ─── */
+async function loadAnimeList(filter) {
+  const grid = document.getElementById('animeGrid');
+  grid.innerHTML = renderSkeletons();
+
+  try {
+    let data;
+    if (filter === 'popular') {
+      data = await apiFetch(`${API}/top/anime?filter=bypopularity&limit=24`);
+    } else if (filter === 'airing') {
+      data = await apiFetch(`${API}/top/anime?filter=airing&limit=24`);
+    } else if (filter === 'upcoming') {
+      data = await apiFetch(`${API}/top/anime?filter=upcoming&limit=24`);
+    } else if (GENRE_IDS[filter]) {
+      data = await apiFetch(`${API}/anime?genres=${GENRE_IDS[filter]}&order_by=score&sort=desc&limit=24`);
+    } else {
+      data = await apiFetch(`${API}/top/anime?filter=bypopularity&limit=24`);
+    }
+
+    const list = data.data || [];
+    if (!list.length) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px 0;color:var(--muted)"><span style="font-size:36px;display:block;margin-bottom:10px">🔍</span>Ничего не найдено</div>';
+      return;
+    }
+
+    // Устанавливаем герой из первого
+    if (filter === 'popular' || filter === 'airing') {
+      setHero(list[0]);
+    }
+
+    renderCards(list, grid);
+  } catch(e) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px 0;color:var(--muted)">
+      <div style="font-size:36px;margin-bottom:12px">⚠️</div>
+      <div>Ошибка загрузки. Попробуйте позже.</div>
+      <button onclick="loadAnimeList('${filter}')" style="margin-top:12px;padding:8px 18px;border-radius:8px;border:1px solid var(--accent);background:none;color:var(--accent);font-family:inherit;cursor:pointer;">Повторить</button>
+    </div>`;
+  }
+}
+
+function renderCards(list, container) {
+  container.innerHTML = list.map((a, i) => {
+    const img = a.images?.jpg?.large_image_url || a.images?.jpg?.image_url || '';
+    const score = a.score ? `⭐${a.score}` : '–';
+    const year = a.year || (a.aired?.from ? new Date(a.aired.from).getFullYear() : '?');
+    const eps = a.episodes ? `${a.episodes} эп.` : (a.status === 'Currently Airing' ? 'Онгоинг' : '?');
+    const isAiring = a.status === 'Currently Airing';
+    const isTop = a.score >= 8.5;
+
+    return `<div class="anime-card fu" onclick="openDetail(${a.mal_id})" style="animation-delay:${i*0.03}s">
+      ${isTop && !isAiring ? `<div class="cbadge badge-top">ТОП</div>` : ''}
+      ${isAiring ? `<div class="cbadge badge-airing">В ЭФИРЕ</div>` : ''}
+      <div class="cposter">
+        ${img ? `<img src="${img}" alt="${a.title}" loading="lazy">` : `<span style="font-size:48px">🎌</span>`}
+        <div class="cplay"><svg width="40" height="40" fill="white" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+        <div class="cep">${eps}</div>
+      </div>
+      <div class="cinfo">
+        <div class="ctitle">${a.title_russian || a.title}</div>
+        <div class="cmeta"><span>${score}</span><span>${year}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ─── ГЕРОЙ ─── */
+function setHero(a) {
+  heroAnime = a;
+  const img = a.images?.jpg?.large_image_url || '';
+  document.getElementById('heroBg').style.backgroundImage = img ? `url(${img})` : '';
+  document.getElementById('heroTitle').textContent = a.title_russian || a.title;
+  const desc = a.synopsis ? a.synopsis.replace(/\[Written.*?\]/g,'').trim().slice(0,180) + '...' : 'Нет описания.';
+  document.getElementById('heroDesc').textContent = desc;
+  document.getElementById('heroWatchBtn').onclick = () => openDetail(a.mal_id);
+}
+
+/* ─── ФИЛЬТРЫ ─── */
+function setFilter(btn, filter) {
+  document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = filter;
+  loadAnimeList(filter);
+}
+
+function loadGenre(g) { showHome(); setFilterByName(g); loadAnimeList(g); }
+function loadTopAiring() { showHome(); setFilterByName('airing'); loadAnimeList('airing'); }
+function loadTopAnime() { showHome(); setFilterByName('popular'); loadAnimeList('popular'); }
+
+function setFilterByName(name) {
+  document.querySelectorAll('.fbtn').forEach(b => {
+    b.classList.toggle('active', b.textContent.toLowerCase().includes(name) || 
+      (name==='popular' && b.textContent.includes('Популярное')) ||
+      (name==='airing' && b.textContent.includes('Онгоинг')) ||
+      (name==='action' && b.textContent.includes('Экшн')) ||
+      (name==='romance' && b.textContent.includes('Романтика')) ||
+      (name==='fantasy' && b.textContent.includes('Фэнтези')) ||
+      (name==='horror' && b.textContent.includes('Хоррор')));
+  });
+}
+
+/* ─── ПОИСК ─── */
+function onSearch(val) {
+  clearTimeout(searchTimer);
+  const q = val.trim();
+  const box = document.getElementById('searchResults');
+  if (!q) { box.innerHTML=''; box.classList.remove('show'); return; }
+  box.innerHTML = '<div class="sr-empty">Поиск...</div>';
+  box.classList.add('show');
+  searchTimer = setTimeout(() => doSearch(q), 600);
+}
+
+async function doSearch(q) {
+  const box = document.getElementById('searchResults');
+  try {
+    const data = await apiFetch(`${API}/anime?q=${encodeURIComponent(q)}&limit=6&sfw=true`);
+    const hits = data.data || [];
+    if (!hits.length) { box.innerHTML='<div class="sr-empty">Ничего не найдено 😔</div>'; return; }
+    box.innerHTML = hits.map(a => {
+      const img = a.images?.jpg?.image_url || '';
+      return `<div class="sr-item" onmousedown="openDetail(${a.mal_id})">
+        ${img ? `<img class="sr-img" src="${img}" alt="">` : '<div class="sr-img" style="background:var(--surface2)"></div>'}
+        <div>
+          <div class="sr-title">${a.title_russian || a.title}</div>
+          <div class="sr-meta">⭐ ${a.score||'–'} · ${a.year||'?'} · ${a.episodes||'?'} эп.</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    box.innerHTML='<div class="sr-empty">Ошибка поиска 😔</div>';
+  }
+}
+
+/* ─── ДЕТАЛЬНАЯ СТРАНИЦА ─── */
+async function openDetail(malId) {
+  document.getElementById('homePage').style.display = 'none';
+  document.getElementById('detailPage').style.display = 'block';
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  const content = document.getElementById('detailContent');
+  content.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div>Загружаем информацию...</div>`;
+
+  try {
+    const [animeRes, episodesRes] = await Promise.allSettled([
+      apiFetch(`${API}/anime/${malId}`),
+      apiFetch(`${API}/anime/${malId}/episodes?page=1`)
+    ]);
+
+    const a = animeRes.status === 'fulfilled' ? animeRes.value.data : null;
+    if (!a) throw new Error('No data');
+
+    const episodes = episodesRes.status === 'fulfilled' ? (episodesRes.value.data || []) : [];
+    const img = a.images?.jpg?.large_image_url || a.images?.jpg?.image_url || '';
+    const score = a.score || '–';
+    const year = a.year || (a.aired?.from ? new Date(a.aired.from).getFullYear() : '?');
+    const eps = a.episodes || '?';
+    const genres = (a.genres || []).map(g => `<span class="tag">${g.name}</span>`).join('');
+    const studios = (a.studios || []).map(s => s.name).join(', ') || '–';
+    const synopsis = a.synopsis ? a.synopsis.replace(/\[Written.*?\]/g,'').trim() : 'Описание недоступно.';
+    const isAiring = a.status === 'Currently Airing';
+
+    // Список серий
+    let epListHTML = '';
+    if (episodes.length) {
+      epListHTML = episodes.slice(0,100).map(ep => `
+        <div class="ep-item">
+          <span class="ep-num">${ep.mal_id}</span>
+          <span class="ep-name">${ep.title || `Эпизод ${ep.mal_id}`}</span>
+        </div>`).join('');
+    } else {
+      const count = Math.min(eps === '?' ? 12 : eps, 100);
+      epListHTML = Array.from({length: count}, (_,i) => `
+        <div class="ep-item">
+          <span class="ep-num">${i+1}</span>
+          <span class="ep-name">Эпизод ${i+1}</span>
+        </div>`).join('');
+    }
+
+    content.innerHTML = `
+      <div class="detail-hero">
+        <div class="detail-hero-bg" style="background-image:url(${img})"></div>
+        <div class="detail-hero-grad"></div>
+        <div class="detail-hero-content">
+          <div class="detail-poster">${img ? `<img src="${img}" alt="">` : ''}</div>
+          <div class="detail-meta">
+            ${a.title_russian ? `<div class="detail-title">${a.title_russian}</div><div class="detail-title-en">${a.title}</div>` : `<div class="detail-title">${a.title}</div>`}
+            <div class="detail-tags">
+              <span class="tag">${year}</span>
+              <span class="tag">${eps} эп.</span>
+              <span class="tag">${a.type || 'TV'}</span>
+              ${isAiring ? '<span class="tag" style="border-color:var(--accent2);color:var(--accent2)">В ЭФИРЕ</span>' : ''}
+              ${genres}
+            </div>
+            <div class="detail-score">⭐ ${score} <small>/ 10 · ${a.scored_by ? (a.scored_by/1000).toFixed(0)+'K голосов' : ''}</small></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-body">
+        <div>
+          <div class="detail-desc">
+            <h3>ОПИСАНИЕ</h3>
+            <p>${synopsis}</p>
+            <div style="margin-top:14px;display:flex;gap:20px;flex-wrap:wrap;">
+              <div><div style="font-size:11px;color:var(--muted);margin-bottom:3px">СТУДИЯ</div><div style="font-size:13px;font-weight:600">${studios}</div></div>
+              <div><div style="font-size:11px;color:var(--muted);margin-bottom:3px">СТАТУС</div><div style="font-size:13px;font-weight:600">${a.status || '–'}</div></div>
+              <div><div style="font-size:11px;color:var(--muted);margin-bottom:3px">РЕЙТИНГ</div><div style="font-size:13px;font-weight:600">${a.rating || '–'}</div></div>
+              <div><div style="font-size:11px;color:var(--muted);margin-bottom:3px">ИСТОЧНИК</div><a href="https://myanimelist.net/anime/${a.mal_id}" target="_blank" style="font-size:13px;font-weight:600;color:var(--accent);text-decoration:none">MAL →</a></div>
+            </div>
+          </div>
+          <div class="no-video-note" style="margin-top:16px">
+            <strong>📺 Где смотреть?</strong><br>
+            Vastum — это каталог. Смотреть серии можно на:
+            <a href="https://animego.org" target="_blank" style="color:var(--accent)">Animego</a>,
+            <a href="https://jut.su" target="_blank" style="color:var(--accent)">Jut.su</a>,
+            <a href="https://crunchyroll.com" target="_blank" style="color:var(--accent)">Crunchyroll</a>,
+            <a href="https://www.netflix.com" target="_blank" style="color:var(--accent)">Netflix</a>.
+            Если хочешь встроенный плеер — нужно подключить хостинг видео.
+          </div>
+        </div>
+        <div class="ep-side">
+          <div class="ep-head">Серии${eps !== '?' ? ` (${eps})` : ''}</div>
+          <div class="ep-list">${epListHTML}</div>
+        </div>
+      </div>`;
+  } catch(e) {
+    content.innerHTML = `<div class="error-state"><div class="eico">😔</div><div>Не удалось загрузить информацию</div>
+      <button onclick="openDetail(${malId})" style="margin-top:12px;padding:8px 18px;border-radius:8px;border:1px solid var(--accent);background:none;color:var(--accent);font-family:inherit;cursor:pointer;">Повторить</button></div>`;
+  }
+}
+
+/* ─── НАВИГАЦИЯ ─── */
+function showHome() {
+  document.getElementById('homePage').style.display = '';
+  document.getElementById('detailPage').style.display = 'none';
+}
+
+/* ─── ИНИЦИАЛИЗАЦИЯ ─── */
+window.onload = () => {
+  loadAnimeList('popular');
+};
+</script>
+
+</body>
+</html>
